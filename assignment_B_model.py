@@ -65,9 +65,13 @@ def calibration(x, y):
         K = 2 * (max(y) - sum([y[slope.index(max(slope))], \
                         y[slope.index(max(slope))+1]])/2)
         start = max(y) - K
-    
+        if start < 0 :
+            start = 0
+        else: 
+            pass
+        # implement a check to make sure that the start value is non-negative
     # curve fitting
-    popt, _ = curve_fit(logistic, x, y, p0 = [start, K, x_peak, 0], maxfev = 10000,
+    popt, _ = curve_fit(logistic, x, y, p0 = [start, K, x_peak, 0], maxfev = 100000,
                         bounds = ([0.5*start, 0.5*K, 1995, -10],
                                   [2*(start+0.001), 2*K, 2030, 10]))
     # +0.001 so that upper bound always larger than lower bound even if start=0
