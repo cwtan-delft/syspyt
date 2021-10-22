@@ -60,17 +60,63 @@ def evaluation (obs_array, sim_array):
     
     return r2_value, pbias_value, nrmse_value
 
-def five_fold (time, value, folds):
-    kfold = KFold(folds)
-    for train, test in kfold.split(obs_array)
+def fold_logistic(time, value, folds=5):
+    if len(time) < folds or len(value) < folds:
+        print("->Dataset smaller than number of folds!")
+        return
+    else:
+        fold_dataset = pd.concat([time,value], axis =1)
+        fold_dataset.reset_index(drop=True)
+        # print(fold_dataset)
+        kfold = KFold(folds)
+        splits = [i for i in kfold.split(fold_dataset)]
+        # print(splits)
+        
+        
+        fold_data = []
+
+        try: 
+            for foldset in splits:
+                train, test = foldset
+                # print("Train:", train)
+                # print("Test:", test)
+                
+                # print(fold_dataset.iloc[4])
+                train_set = fold_dataset.iloc[train]
+                # print(train_set)
+        
+                start, K, x_peak, r = calibration(train_set['TimePeriod'],train_set['Value'])
+                
+                test_set = fold_dataset.iloc[test]
+                # print(test_set['TimePeriod'])
+                # print("Test set:", test_time)
+                lf_results = [logistic(year, start, K, x_peak, r) for year in test_set['TimePeriod']]
+                r2_value, pbias_value, nrmse_value = evaluation(test_set["Value"],lf_results)
+                fold_data.append([r2_value, pbias_value, nrmse_value])
+                
+            # print(fold_data)
+            r2_averaged= np.mean(fold_data[:][0])
+            pbias_averaged= np.mean(fold_data[:][1])
+            nrmse_averaged= np.mean(fold_data[:][2])
+            
+            return (r2_averaged, pbias_averaged, nrmse_averaged)
+        except RuntimeError:
+            print("->No solution for logistic found for {}".format(country))
+            return
+
+            
 #%% Import Data
 excel = pd.read_excel("Goal13.xlsx","data")
 
+metric = 'Number of people affected by disaster (number)'
+
 #Data selection - 'Number of people affected by disaster (number)'
-excel_affected = excel[excel["SeriesDescription"]=='Number of people affected by disaster (number)']
+excel_affected = excel[excel["SeriesDescription"]==metric]
+# create pivot table of country vs year for number of people affected by disaster
+pivot = excel_affected.pivot(index="GeoAreaName", columns="TimePeriod", values="Value")
 
 
-#%% Sanity Check
+#%% Sanity Check (Old)
 # sanity = pd.DataFrame(columns=["Country","Num. Values","Minimum","Maximum","Mean"])
 sanity = []
 #counting non-missing values per country
@@ -96,11 +142,12 @@ sanity_df = pd.DataFrame(sanity, columns=["Country","Num. Values","Minimum","Max
 sanity_df.set_index('Country')
 
 
-#%% Logistic Model
+#%% Logistic  (old)
 
 projection_year = 2030
 logistic_results = {}
 
+# for country in excel_affected["GeoAreaName"].unique()[5:10]:
 for country in excel_affected["GeoAreaName"].unique():
     #for debug
     print(country)
@@ -110,29 +157,64 @@ for country in excel_affected["GeoAreaName"].unique():
     x = excel_affected.loc[excel_affected.GeoAreaName == country, 'TimePeriod']
     y = excel_affected.loc[excel_affected.GeoAreaName == country, 'Value']
     
-    #run logistic calibration
-    start, K, x_peak, r = calibration(x,y)
-    
-    #run logistic function with calibration values
-    lf_2030 = logistic(projection_year, start, K, x_peak, r)
+
+    try:
+        #run logistic calibration
+        start, K, x_peak, r = calibration(x,y)
+        lf_2030 = logistic(projection_year, start, K, x_peak, r)
+        
+        #generating logistic model results for datapoints
+        lf_list = [logistic(year, start, K, x_peak, r) for year in x]
+        
+        #performing Evaluation of regression
+        r2_value, pbias_value, nrmse_value = evaluation(y,lf_list)
+        
+        if math.isnan(r2_value):
+            print("->{} has {} datapoints, not enough for regression".format(country,len(lf_list)))
+            start = K = x_peak = r = lf_2030 = lf_list = r2_value = pbias_value = nrmse_value = math.nan 
+    except RuntimeError:
+        print("->No solution for logistic found for {}".format(country))
+        
+        pass
+    #append values to dictionary
     logistic_results[country]['TimePeriod'] = x.tolist()
     logistic_results[country]['Value'] = y.tolist()
     logistic_results[country]['Calibration'] = (start, K, x_peak, r)
     logistic_results[country]['2030 Logistic'] = lf_2030
     logistic_results[country]['Growth Rate'] = r
     
-    #generating logistic model results for datapoints
-    lf_list = [logistic(year, start, K, x_peak, r) for year in x]
     logistic_results[country]['Logistic Series'] = lf_list
-    
-    #performing Evaluation of regression
-    r2_value, pbias_value, nrmse_value = evaluation(y,lf_list)
     
     logistic_results[country]['R2'] = r2_value
     logistic_results[country]['PBIAS'] = pbias_value
     logistic_results[country]['Calibration'] = nrmse_value
     
-    if math.isnan(r2_value):
-        print("->{} has {} datapoints, not enough for regression".format(country,len(lf_list)))
-
+    fold_dataset = pd.concat([x,y], axis =1)
+    fold_dataset.reset_index(drop=True)
+    fold_results = fold_logistic(x,y,5)
+    logistic_results[country]['Fold results'] = fold_results
     
+#%%
+
+#list of countries for plotting
+country_plot =  ["Australia", "Mexico"]
+# list of tableau colours 
+tableau10 = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
+
+#initialise plot
+fig = plt.figure()
+ax = plt.subplot(111)
+
+
+for idx,country in enumerate(country_plot):
+    time = logistic_results[country]['TimePeriod']
+    obs = logistic_results[country]['Value']
+    sim = logistic_results[country]['Logistic Series']
+    
+    ax.plot(time,obs, color = tableau10[idx*2], label="{}: Observed".format(country) )
+    ax.plot(time,sim, color = tableau10[idx*2+1], label="{}: Simulated".format(country) )
+    
+    
+plt.legend()    
+plt.xlabel("Year", fontsize=10)  
+plt.ylabel(metric, fontsize=12)   
