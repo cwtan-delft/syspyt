@@ -201,5 +201,5 @@ def window():
     app = QApplication(sys.argv)  # start app
     mainWin = KFoldWindow()  # create main window
     mainWin.show()  # show it
-    sys.exit( app.exec_() )  # close app when main window closed
-    return app.KFold
+    app.exec_() # close app when main window closed
+    return mainWin.kFold

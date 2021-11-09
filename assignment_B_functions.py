@@ -202,7 +202,7 @@ def fold_logistic(timeperiod, value, country, folds=5, random_seed=1):
 
     '''
 
-    kfold_array = np.empty(3)*np.na
+    kfold_array = np.empty(3)*np.nan
     
     length_t = len(timeperiod)
     length_v = len(timeperiod)

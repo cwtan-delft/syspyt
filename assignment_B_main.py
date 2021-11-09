@@ -98,14 +98,16 @@ print(sanity_df.head(10))
 # Part4: Perform the main analysis
 ##################################
 if __name__ == "__main__":
-    num_folds = QApplication(sys.argv)  # start app
-    mainWin = KFoldWindow()  # create main window
-    mainWin.show()  # show it
-    sys.exit( num_folds.exec_() )  # close app when main window closed
+    num_folds = window()
+    # num_folds = QApplication(sys.argv)  # start app
+    # mainWin = KFoldWindow()  # create main window
+    # mainWin.show()  # show it
+    # sys.exit( num_folds.exec_() )  # close app when main window closed
 
 #set variables for logistic evaluation and validation here
 projection_year = 2030
 k_fold_seed = 1
+
 years_list = np.linspace(2005,2020,150)     
 
 results = main_analysis(goal13_affected, projection_year, years_list, 5, 1)
