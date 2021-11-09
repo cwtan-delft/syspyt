@@ -15,9 +15,10 @@ from scipy.stats import linregress
 from sklearn.model_selection import KFold
 from sklearn.metrics import r2_score
 
-import traceback
+# import traceback
 
 #%% functions
+
 # function to calculated percentage bias
 def percent_bias(obs_array,sim_array):
     '''
@@ -163,6 +164,8 @@ def evaluation (obs_array, sim_array):
     else:
         r2_value = r2_score(obs_array, sim_array)
         
+        # r2_value = r2(obs_array, sim_array)
+        
         pbias_value = percent_bias(obs_array, sim_array)
         
         mse_value, rmse_value, nrmse_value = nrmse(obs_array, sim_array)
@@ -203,6 +206,7 @@ def fold_logistic(timeperiod, value, country, folds=5, random_seed=1):
     '''
 
     kfold_array = np.empty(3)*np.nan
+    fold_data = None
     
     length_t = len(timeperiod)
     length_v = len(timeperiod)
@@ -217,43 +221,35 @@ def fold_logistic(timeperiod, value, country, folds=5, random_seed=1):
     else:
         fold_dataset = pd.concat([timeperiod,value], axis =1)
         fold_dataset.reset_index(drop=True)
-        # print(fold_dataset)
+
         kfold = KFold(folds,shuffle=True,random_state = random_seed)
         splits = [i for i in kfold.split(fold_dataset)]
         # print(splits)
         
         fold_data = []
 
-        try: 
-            for foldset in splits:
-                train, test = foldset
-                # print("Train:", train)
-                # print("Test:", test)
-                
-                # print(fold_dataset.iloc[4])
-                train_set = fold_dataset.iloc[train]
-                # print(train_set)
         
+        for foldset in splits:
+            train, test = foldset
+            # print("Train:", train)
+            # print("Test:", test)
+            
+            train_set = fold_dataset.iloc[train]
+            try: 
                 start, K, x_peak, r = calibration(train_set['TimePeriod'],train_set['Value'])
-                
                 test_set = fold_dataset.iloc[test]
-                # print(test_set['TimePeriod'])
-                # print("Test set:", test_time)
+    
                 lf_results = [logistic(year, start, K, x_peak, r) for year in test_set['TimePeriod']]
                 r2_value, pbias_value, nrmse_value = evaluation(test_set["Value"],lf_results)
                 fold_data.append([r2_value, pbias_value, nrmse_value])
-                
-            # print(fold_data)
-            r2_averaged= np.mean(fold_data[:][0])
-            pbias_averaged= np.mean(fold_data[:][1])
-            nrmse_averaged= np.mean(fold_data[:][2])
-            
-            kfold_array = np.array([r2_averaged, pbias_averaged, nrmse_averaged])
-        
-        except RuntimeError:
+            except RuntimeError:
             # print("->No solution for fold logistic found for {}".format(country))
-            pass
-        
+                pass
+            
+
+        fold_data = np.array(fold_data)
+        kfold_array = np.nanmean(fold_data,axis = 0)
+          
     return kfold_array
 
 def main_analysis (goal_dataset, projection_year, timestep_list, num_folds = 5, k_fold_seed = 1):
@@ -293,7 +289,7 @@ def main_analysis (goal_dataset, projection_year, timestep_list, num_folds = 5, 
             Logistic Series: simulated vlaues using the logistic model at timessteps given by timestep_list\n
             Linear Series: simulated vlaues using the linear model at timessteps given by timestep_list
             
-            Growth Rate: growth rate (r) parameter for logistic model\n
+            Growth Rate: per capita growth rate of number of people affected by disaster (r) parameter for logistic model\n
             2030 Logistic: projected value of the SDG at 2030 from the logistic model\n
             2030 Linear: projected value of the SDG at 2030 from the linear model\n
                         
@@ -301,9 +297,10 @@ def main_analysis (goal_dataset, projection_year, timestep_list, num_folds = 5, 
     '''
     unique_countries = goal_dataset["GeoAreaName"].unique()
     results = {}
+    
     for idx, country in enumerate(unique_countries):
         #for debug
-        print(country)
+        # print(country)
         
         #initialise values and dictionaries
         results[country] = {}
@@ -347,9 +344,9 @@ def main_analysis (goal_dataset, projection_year, timestep_list, num_folds = 5, 
             lin_r2, lin_pbias, lin_nrmse = evaluation(y,lin_eval)
             
         except Exception:
-            print(traceback.format_exc())
+            # print(traceback.format_exc())
             # print("\nLinear regression issue")
-        
+            pass
         
         #append values to results dictionary
         results[country]['TimePeriod'] = x.tolist()
@@ -379,7 +376,8 @@ def main_analysis (goal_dataset, projection_year, timestep_list, num_folds = 5, 
     
     return results
 
-def plot_obs_sim (country_list, results_dict):
+
+def plot_trendlines (country_list, results_dict):
     '''
     Takes a list of countries and a dictionary of main_analysis results, and creates:
         a scatter plot of their observed values
@@ -420,6 +418,7 @@ def plot_obs_sim (country_list, results_dict):
         plt.scatter(timeperiod, obs, color = tableau10[idx], label="{}: Observed".format(country),  )
         plt.plot(simperiod, log_sim, color = tableau10[idx], label="{}: Logistic Simulated".format(country), linestyle = "dashed" )
         plt.plot(simperiod, lin_sim, color = tableau10[idx], label="{}: Linear Simulated".format(country) )
+    
     # plt.xlim(min(timeperiod),max(timeperiod))
     plt.xticks(np.arange(2004,2021,2))
     plt.ylim(min(min(obs),min(lin_sim),min(log_sim)))
@@ -436,7 +435,7 @@ def plot_obs_sim (country_list, results_dict):
        
     return fig 
 
-def plot_growthrate (df, country_column, growth_column, proj_column):
+def plot_dotplot (df, country_column, growth_column, proj_column):
     '''
     Takes a dataframe of countries and their main_analysis,
     and the column names for Country, Growth Rates and Projected 2030 values,
@@ -462,10 +461,12 @@ def plot_growthrate (df, country_column, growth_column, proj_column):
 
     '''
     fig = plt.figure(figsize = (6,5), dpi=300)  
-    plt.scatter(df[growth_column], df[country_column], c=df[proj_column], cmap = 'brg' ,)
+    plt.axvline(0, 0, 250, color = "slategrey", alpha = 0.5, label = "0 growth rate") 
+    plt.scatter(df[growth_column], df[country_column], c=df[proj_column], cmap = 'rainbow' ,)
     plt.colorbar(pad = 0.02, label="Projected Number of people affected by disaster in 2030")
     
-    plt.xlabel("Growth Rate", fontsize = 10)
+    
+    plt.xlabel("Growth Rate (per capita growth rate of number of people affected by disaster)", fontsize = 10)
     plt.xlim(-10.5,10.5)
     plt.tight_layout()
     plt.show()

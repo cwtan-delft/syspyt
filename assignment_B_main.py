@@ -12,13 +12,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import cProfile 
-import pstats 
+# import cProfile 
+# import pstats 
+import time
 
-from assignment_B_functions import *
+from assignment_B_functions import main_analysis, plot_trendlines, plot_dotplot
 from assignment_B_window import window
 
-import sys
 
 #%% 
 ##################################
@@ -27,6 +27,7 @@ import sys
 
 # pr=cProfile.Profile() 
 # pr.enable()
+tstart = time.time()  
 
 #%% Import Data
 
@@ -83,8 +84,12 @@ for country in unique_countries:
 sanity_df = pd.DataFrame(sanity, columns=["GeoAreaCode","GeoAreaName","Observations","Minimum","Maximum","Mean"])
 sanity_df.set_index( 'GeoAreaCode',inplace=True)
 
-#print for the first 10 countries
-print(sanity_df.head(10))
+print("Sanity Check")
+print("----------------------------------------------")
+print("The maximum number of non-missing values is {} ".format(sanity_df.Observations.max()))
+print("The minimum number of non-missing values is {} ".format(sanity_df.Observations.min()))
+print("The mean number of non-missing values is {:.2f} ".format(sanity_df.Observations.mean()))
+
 
 #print countries with the maximum amount of datapoints
 # print([(k,v) for k,v in country_counts.items() if v == country_counts.max()])
@@ -97,20 +102,25 @@ print(sanity_df.head(10))
 ##################################
 # Part4: Perform the main analysis
 ##################################
+
+
+num_folds = 5
+##################################
+'''
+comment this out to disable GUI
+'''
 if __name__ == "__main__":
     num_folds = window()
-    # num_folds = QApplication(sys.argv)  # start app
-    # mainWin = KFoldWindow()  # create main window
-    # mainWin.show()  # show it
-    # sys.exit( num_folds.exec_() )  # close app when main window closed
+##################################
 
 #set variables for logistic evaluation and validation here
 projection_year = 2030
 k_fold_seed = 1
 
+
 years_list = np.linspace(2005,2020,150)     
 
-results = main_analysis(goal13_affected, projection_year, years_list, 5, 1)
+results = main_analysis(goal13_affected, projection_year, years_list, num_folds, k_fold_seed)
 
 #create a dataframe from results dictionary
 results_df = pd.DataFrame.from_dict(results,orient='index')
@@ -125,8 +135,8 @@ results_df.index.name = 'GeoAreaName'
 
 country_plot =  ["Niger", "Sri Lanka"]
 
-fig_2_countries = plot_obs_sim(country_plot, results)
-fig_name = "obsevered_vs_simulated_trend_{}_vs_{}.png".format(country_plot[0],country_plot[1])
+fig_2_countries = plot_trendlines(country_plot, results)
+fig_name = "{}_vs_{}_timeseries.png".format(country_plot[0],country_plot[1])
 fig_2_countries.savefig(fig_name,bbox_inches="tight")
 plt.close(fig_2_countries)
 #%% ordered dot plot of 30 most polulous countries
@@ -146,15 +156,15 @@ plot_df = results_30_df[["GeoAreaName","2020 Population", "2030 Logistic", "2030
 plot_df.dropna(axis = 0, inplace = True)
 
 #plot
-growthplot = plot_growthrate(plot_df, "GeoAreaName", "Growth Rate", "2030 Logistic")
-growthplot.savefig("ordered_dot_plot.png")
+growthplot = plot_dotplot(plot_df, "GeoAreaName", "Growth Rate", "2030 Logistic")
+growthplot.savefig("dot.png")
 plt.close(growthplot)
 #%% create csv file
 
 ##################################
 # Part6: Export Main results to a csv file
 ##################################
-csv_name = "goal 13 analysis main results.csv"
+csv_name = "SDG13_simulation.csv"
 
 results_df = pd.DataFrame.from_dict(results,orient='index')
 results_df.index.name = 'GeoAreaName'
@@ -238,3 +248,5 @@ csv_data.to_csv(csv_name)
 # ps.print_stats('script_to_search')
 # ps.print_callers()
 
+tend = time.time()  
+print('Done script in %5.2f s\n'% (tend - tstart))

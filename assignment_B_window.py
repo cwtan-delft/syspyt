@@ -5,23 +5,12 @@ Created on Mon Nov  8 20:12:59 2021
 @author: tanch
 """
 
-from PyQt5.QtWidgets import * 
-# from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QDesktopWidget
-# from PyQt5 import QtCore, QtGui
-from PyQt5.QtGui import * 
-from PyQt5.QtCore import * 
+from PyQt5.QtWidgets import QMainWindow, QLabel, QDesktopWidget, QRadioButton, QPushButton, QGraphicsColorizeEffect, QFont, QApplication
+from PyQt5.QtCore import Qt 
 import sys
-import time
 
 
-#%% 
-
-# def print_val(val):
-#     print(val)
-#     return val
-
-#%%
-
+#%% class for GUI window
 
 class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
     '''
@@ -52,7 +41,10 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
         # showing all the widgets
         self.show()
         #set flag for Window to stay on top
+        self.activateWindow()
+        
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        
         
     def UiComponents(self):
         '''
@@ -66,11 +58,11 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
 
         '''
         #draw all widgets
-        self.title = self.title()
-        self.radio = self.KFoldRadio()
-        # self.ok = self.OK_button()
+        self.title()
+        self.KFoldRadio()
+        self.OK_button()
         
-        
+
     def centreWindow(self):
         '''
         Centre GUI window
@@ -112,19 +104,19 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
         font_head.setBold(True)
 
         #create a title widget
-        head = QLabel("Choose between 5-fold OR 10-fold cross-validation", self)
+        self.head = QLabel("Choose between 5-fold OR 10-fold cross-validation", self)
       
         # setting font to the head
-        head.setFont(font_head)
+        self.head.setFont(font_head)
         
         # setting geometry to the head
-        head.setGeometry(10, 10, 1080, 60)
+        self.head.setGeometry(10, 10, 1080, 60)
       
         # setting alignment of the head
-        head.setAlignment(Qt.AlignCenter)
+        self.head.setAlignment(Qt.AlignCenter)
         
         # setting colour of the head
-        head.setGraphicsEffect(color)
+        self.head.setGraphicsEffect(color)
     
     def KFoldRadio (self):
         '''
@@ -138,16 +130,16 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
 
         '''
         
-        radiobutton = QRadioButton("5-fold", self)    
+        self.radiobutton = QRadioButton("5-fold", self)    
         # radiobutton.setChecked(True)
-        radiobutton.kFold = 5
-        radiobutton.toggled.connect(self.radioOnClicked)
-        radiobutton.setGeometry(300, 80, 150, 60)
+        self.radiobutton.kFold = 5
+        self.radiobutton.toggled.connect(self.radioOnClicked)
+        self.radiobutton.setGeometry(300, 80, 150, 60)
         
-        radiobutton = QRadioButton("10-fold",self)
-        radiobutton.kFold = 10
-        radiobutton.toggled.connect(self.radioOnClicked)
-        radiobutton.setGeometry(600, 80, 150, 60)
+        self.radiobutton = QRadioButton("10-fold",self)
+        self.radiobutton.kFold = 10
+        self.radiobutton.toggled.connect(self.radioOnClicked)
+        self.radiobutton.setGeometry(600, 80, 150, 60)
         # centralWidget = QWidget(self)  # create central widget
         # self.setCentralWidget(centralWidget)   # assign it to main window
 
@@ -157,15 +149,12 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
         # title = QLabel("Hello World", self)  # make text label
         # vLayout.addWidget(title)  # add text label to layout
     
-    # def OK_button (self):
-    #     okbutton = QPushButton("OK",self)
-    #     okbutton.setGeometry(550, 200, 100, 60)
-    #     # okbutton.setAlignment(Qt.AlignCenter)
-    #     if self.radio.isChecked():
-    #         okbutton.clicked.connect(lambda:self.close())
-    #         print_val(self.kFold)
-    #     else:
-    #         self.title.setText("Choose using the radio-buttons!")
+    def OK_button (self):
+        self.okbutton = QPushButton("OK",self)
+        self.okbutton.setGeometry(500, 200, 100, 60)
+
+        self.okbutton.clicked.connect(self.okOnClicked)
+
         
     def radioOnClicked(self):
         '''
@@ -183,8 +172,15 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
         radiobutton = self.sender()
         if radiobutton.isChecked():
             self.kFold = radiobutton.kFold
-            # print_val(radiobutton.kFold)
+
+            # self.close()
+            
+    def okOnClicked(self):
+
+        if self.kFold != None:
             self.close()
+        else:
+            self.head.setText("Choose validation folds using the radio-buttons!")
 #%%
 def window():
     '''
@@ -194,8 +190,8 @@ def window():
     
     Returns
     -------
-    TYPE
-        DESCRIPTION.
+    int
+        The k-value for K-fold validation (5 or 10).
 
     '''
     app = QApplication(sys.argv)  # start app
