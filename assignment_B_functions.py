@@ -21,20 +21,25 @@ import traceback
 # function to calculated percentage bias
 def percent_bias(obs_array,sim_array):
     '''
+    Pecentage bias
+    
     Takes an array of observed values and simulated values and calculated and returns the percent bias (PBIAS) value of the simulated values. \n
     
     Parameters
     ----------
-    obs_array : Array-like
+    obs_array : array-like
         Array of observed values.
-    sim_array : Array-like
+    sim_array : array-like
         Array of simulated values from modelling.
 
     Returns
     -------
-    pbias : Float
+    pbias : float
         PBIAS value of simulated array.
-        Returns None if the length of the parameters do not match.
+    
+    Warning
+    -------
+    Returns None if the length of the parameters do not match.
     '''
 
     if len(obs_array) != len(sim_array):
@@ -47,26 +52,30 @@ def percent_bias(obs_array,sim_array):
 # function to calculate variations of mean square error (mse): mse, root mse (rmse), normalised rmse (nrmse)
 def nrmse(obs_array,sim_array):
     '''
-    Takes an array of observed values and simulated values and \n
-    calculates and returns the mean-square-error (MSE), root-mean-square-error (RMSE), \n
-    normalised-root-mean-square-error(NRMSE, from std dev) values of the simulated values. \n
+    Normalised root mean square error
+    
+    Takes an array of observed values and simulated values and
+    calculates and returns the mean-square-error (MSE), root-mean-square-error (RMSE),
+    normalised-root-mean-square-error(NRMSE, from std dev) values of the simulated values.
 
     Parameters
     ----------
-    obs_array : Array-like
+    obs_array : array-like
         Array of observed values.
-    sim_array : Array-like
+    sim_array : array-like
         Array of simulated values from modelling.
 
     Returns
     -------
-    mse_val : Float
+    mse_val : float
         MSE value of simulated array.
-    rmse_val : Float
+    rmse_val : float
         RMSE value of simulated array.
-    nrmse_val : Float
+    nrmse_val : float
         NRMSE value of simulated array.
 
+    Warning
+    -------
     Returns None if the length of the parameters do not match.
     '''
     
@@ -83,6 +92,31 @@ def nrmse(obs_array,sim_array):
 
 
 def r2(obs_array,sim_array):
+    '''
+    R-squared value
+    
+    Takes an array of observed values and simulated values and
+    calculates and returns the R-squared value for the simulated values.   
+    
+    Parameters
+    ----------
+    obs_array : Array-like
+        Array of observed values.
+    sim_array : Array-like
+        Array of simulated values from modelling.
+
+
+    Returns
+    -------
+    r2_val : float
+        R-squared value for the simulated array.
+        
+    Warning
+    -------
+    Returns None if the length of the arrays do not match.
+
+    '''
+    
     if len(obs_array) != len(sim_array):
         print("percentBias: !!! inputs do not have the same length")
         return
@@ -97,15 +131,17 @@ def r2(obs_array,sim_array):
 
 def evaluation (obs_array, sim_array):
     '''
-    Takes an array of observed values and simulated values,\n
-    calculates and returns the R^2, Percentage-bias and \n
+    3-criteria evaluation
+    
+    Takes an array of observed values and simulated values,
+    calculates and returns the criteria evaluation of R^2, Percentage-bias and
     Normalised root mean square error values.
 
     Parameters
     ----------
-    obs_array : Array-like
+    obs_array : array-like
         Array of observed values.
-    sim_array : Array-like
+    sim_array : array-like
         Array of simulated values from modelling.
 
     Returns
@@ -116,8 +152,10 @@ def evaluation (obs_array, sim_array):
         Calculated Pecentage-bias of simulated values.
     nrmse_value : float
         Calculated Normalised root mean square error value of simulated values.
-        
-    Returns NaN for all variables if the length of the parameters do not match.
+    
+    Warning
+    -------
+    Returns NaN for all variables if the length of the arrays do not match.
     '''
     if len(obs_array) < 2:
         r2_value = pbias_value = nrmse_value = math.nan
@@ -133,10 +171,12 @@ def evaluation (obs_array, sim_array):
 
 def fold_logistic(timeperiod, value, country, folds=5, random_seed=1):
     '''
-    Takes an array of years and an array of corresponding SDG indicator values, \n
-    checks if the observed and simulated arrays are of equal length \n
-    or if they exceed the declared number of folds for K-folds, \n
-    then run a logistic validation. \n
+    K-fold validation of Logistic model
+    
+    Takes an array of years and an array of corresponding SDG indicator values,
+    checks if the observed and simulated arrays are of equal length
+    or if they exceed the declared number of folds for K-folds,
+    then run a logistic validation.
 
     Parameters
     ----------
@@ -144,7 +184,7 @@ def fold_logistic(timeperiod, value, country, folds=5, random_seed=1):
         Array of years where SDG indicators are recorded.
     value : array-like
         Array of SDG indicator values corresponding to the array of years.
-    country : string
+    country : str
         Country name for raising warning.
     folds : int, optional
         Number of folds performed for K-fold validation. The default is 5.
@@ -154,8 +194,11 @@ def fold_logistic(timeperiod, value, country, folds=5, random_seed=1):
     Returns
     -------
     kfold_array : numpy array object
-        An array of the averaged R^2, Percent-bias and Normalised root mean square error values for the K-fold validation.\n
-        Returns an array of NaNs if the checks fail or if the K-fold validation is otherwise unsuccessful.
+        An array of the averaged R^2, Percent-bias and Normalised root mean square error values for the K-fold validation.
+        
+    Warning
+    -------
+    Returns an array of NaNs if the checks fail or if the K-fold validation is otherwise unsuccessful.
 
     '''
 
@@ -215,10 +258,12 @@ def fold_logistic(timeperiod, value, country, folds=5, random_seed=1):
 
 def main_analysis (goal_dataset, projection_year, timestep_list, num_folds = 5, k_fold_seed = 1):
     '''
-    Takes a dataframe of SDG indicator values by country and year, \n
-    and performs a logistic regression, linear regression and logistic k-fold validation. \n
-    \n
-    Using the regression, the projected value of the SDG at 2030 is calculated per country \n
+    Perform Main Analysis
+    
+    Takes a dataframe of SDG indicator values by country and year,
+    and performs a logistic regression, linear regression and logistic k-fold validation.
+    
+    Using the regression, the projected value of the SDG at 2030 is calculated per country
     and the evaluation of the regressions and validations on three criteria:
         R^2, PBIAS and NRMSE \n
     
@@ -240,19 +285,18 @@ def main_analysis (goal_dataset, projection_year, timestep_list, num_folds = 5, 
     -------
     results : dict
         A dictionary containing the following information for each country in the input dataframe:
-            TimePeriod: list of years with recorded data
-            SimulationPeriod: timestep_list
-            Value: list of observed values for SDG indicator
+            TimePeriod: list of years with recorded data、\n
+            SimulationPeriod: timestep_list\n
+            Value: list of observed values for SDG indicator\n
             Calibation: calibration parameters start, K, x_peak, r for logistic model
             
-            Logistic Series: simulated vlaues using the logistic model at timessteps given by timestep_list
+            Logistic Series: simulated vlaues using the logistic model at timessteps given by timestep_list\n
             Linear Series: simulated vlaues using the linear model at timessteps given by timestep_list
             
-            Growth Rate: growth rate (r) parameter for logistic model
-            2030 Logistic: projected value of the SDG at 2030 from the logistic model
-            2030 Linear: projected value of the SDG at 2030 from the linear model
-            
-            
+            Growth Rate: growth rate (r) parameter for logistic model\n
+            2030 Logistic: projected value of the SDG at 2030 from the logistic model\n
+            2030 Linear: projected value of the SDG at 2030 from the linear model\n
+                        
             Logistic/Linear/X-Fold R2, PIAS, NRMSE: Evaluation criteria valaues for model evaluations
     '''
     unique_countries = goal_dataset["GeoAreaName"].unique()
@@ -346,7 +390,7 @@ def plot_obs_sim (country_list, results_dict):
     ----------
     country_list : array
         Array of keys in results_dict corresponding to the countries to be plotted
-    results_dict : TYPE
+    results_dict : dict
         Dictionary of results from main_analysis containing the lists of observed values and simulated values for logistic and linear models per country
 
     Returns
@@ -394,9 +438,9 @@ def plot_obs_sim (country_list, results_dict):
 
 def plot_growthrate (df, country_column, growth_column, proj_column):
     '''
-    Takes a dataframe of countries and their main_analysis,\n
+    Takes a dataframe of countries and their main_analysis,
     and the column names for Country, Growth Rates and Projected 2030 values,
-     and creates:
+    and creates:
         an ordered dot plot indicating the growth rate with the colour indicating the projected values in 2030.
 
 

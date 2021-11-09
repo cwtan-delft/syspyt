@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>assignment_B_functions module &mdash; Sutainability Analysis with Python 2021 1.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Sutainability Analysis with Python 2021
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">assignment_B_functions module</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sutainability Analysis with Python 2021</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>assignment_B_functions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/assignment_B_functions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-assignment_B_functions">
+<span id="assignment-b-functions-module"></span><h1>assignment_B_functions module<a class="headerlink" href="#module-assignment_B_functions" title="Permalink to this headline">¶</a></h1>
+<p>Created on Tue Nov  9 03:35:54 2021</p>
+<p>&#64;author: tanch</p>
+<dl class="py function">
+<dt id="assignment_B_functions.evaluation">
+<code class="sig-prename descclassname">assignment_B_functions.</code><code class="sig-name descname">evaluation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_array</span></em>, <em class="sig-param"><span class="n">sim_array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#assignment_B_functions.evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>3-criteria evaluation</p>
+<p>Takes an array of observed values and simulated values,
+calculates and returns the criteria evaluation of R^2, Percentage-bias and
+Normalised root mean square error values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_array</strong> (<em>array-like</em>) – Array of observed values.</p></li>
+<li><p><strong>sim_array</strong> (<em>array-like</em>) – Array of simulated values from modelling.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>r2_value</strong> (<em>float</em>) – R^2 score (coefficient of determination) regression score of simulated values based on the the scikit learn metrics method.</p></li>
+<li><p><strong>pbias_value</strong> (<em>float</em>) – Calculated Pecentage-bias of simulated values.</p></li>
+<li><p><strong>nrmse_value</strong> (<em>float</em>) – Calculated Normalised root mean square error value of simulated values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Returns NaN for all variables if the length of the arrays do not match.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="assignment_B_functions.fold_logistic">
+<code class="sig-prename descclassname">assignment_B_functions.</code><code class="sig-name descname">fold_logistic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeperiod</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">folds</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">random_seed</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#assignment_B_functions.fold_logistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>K-fold validation of Logistic model</p>
+<p>Takes an array of years and an array of corresponding SDG indicator values,
+checks if the observed and simulated arrays are of equal length
+or if they exceed the declared number of folds for K-folds,
+then run a logistic validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeperiod</strong> (<em>array-like</em>) – Array of years where SDG indicators are recorded.</p></li>
+<li><p><strong>value</strong> (<em>array-like</em>) – Array of SDG indicator values corresponding to the array of years.</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – Country name for raising warning.</p></li>
+<li><p><strong>folds</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of folds performed for K-fold validation. The default is 5.</p></li>
+<li><p><strong>random_seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random seed for KFold function shuffling. The default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>kfold_array</strong> – An array of the averaged R^2, Percent-bias and Normalised root mean square error values for the K-fold validation.
+Returns an array of NaNs if the checks fail or if the K-fold validation is otherwise unsuccessful.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="assignment_B_functions.main_analysis">
+<code class="sig-prename descclassname">assignment_B_functions.</code><code class="sig-name descname">main_analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">goal_dataset</span></em>, <em class="sig-param"><span class="n">projection_year</span></em>, <em class="sig-param"><span class="n">timestep_list</span></em>, <em class="sig-param"><span class="n">num_folds</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">k_fold_seed</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#assignment_B_functions.main_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Perform Main Analysis</p>
+<p>Takes a dataframe of SDG indicator values by country and year,
+and performs a logistic regression, linear regression and logistic k-fold validation.</p>
+<p>Using the regression, the projected value of the SDG at 2030 is calculated per country
+and the evaluation of the regressions and validations on three criteria:</p>
+<blockquote>
+<div><p>R^2, PBIAS and NRMSE</p>
+</div></blockquote>
+<dl class="simple">
+<dt>goal_dataset<span class="classifier">DataFrame object</span></dt><dd><p>Dataframe object containing the SDG indicator values.</p>
+</dd>
+<dt>projection_year<span class="classifier">int</span></dt><dd><p>Integer of the year for projection.</p>
+</dd>
+<dt>timestep_list<span class="classifier">array-like</span></dt><dd><p>Array of timesteps for calulating simulated values from logistic and linear regression models of the SDG indicator.</p>
+</dd>
+<dt>num_folds<span class="classifier">int, optional</span></dt><dd><p>Number of folds performed for K-fold validation. The default is 5.</p>
+</dd>
+<dt>k_fold_seed<span class="classifier">int, optional</span></dt><dd><p>Random seed for KFold function shuffling. The default is 1.</p>
+</dd>
+</dl>
+<dl>
+<dt>results<span class="classifier">dict</span></dt><dd><dl>
+<dt>A dictionary containing the following information for each country in the input dataframe:</dt><dd><p>TimePeriod: list of years with recorded data、</p>
+<p>SimulationPeriod: timestep_list</p>
+<p>Value: list of observed values for SDG indicator</p>
+<p>Calibation: calibration parameters start, K, x_peak, r for logistic model</p>
+<p>Logistic Series: simulated vlaues using the logistic model at timessteps given by timestep_list</p>
+<p>Linear Series: simulated vlaues using the linear model at timessteps given by timestep_list</p>
+<p>Growth Rate: growth rate (r) parameter for logistic model</p>
+<p>2030 Logistic: projected value of the SDG at 2030 from the logistic model</p>
+<p>2030 Linear: projected value of the SDG at 2030 from the linear model</p>
+<p>Logistic/Linear/X-Fold R2, PIAS, NRMSE:</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p>Evaluation criteria valaues for model evaluations</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="assignment_B_functions.nrmse">
+<code class="sig-prename descclassname">assignment_B_functions.</code><code class="sig-name descname">nrmse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_array</span></em>, <em class="sig-param"><span class="n">sim_array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#assignment_B_functions.nrmse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalised root mean square error</p>
+<p>Takes an array of observed values and simulated values and
+calculates and returns the mean-square-error (MSE), root-mean-square-error (RMSE),
+normalised-root-mean-square-error(NRMSE, from std dev) values of the simulated values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_array</strong> (<em>array-like</em>) – Array of observed values.</p></li>
+<li><p><strong>sim_array</strong> (<em>array-like</em>) – Array of simulated values from modelling.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mse_val</strong> (<em>float</em>) – MSE value of simulated array.</p></li>
+<li><p><strong>rmse_val</strong> (<em>float</em>) – RMSE value of simulated array.</p></li>
+<li><p><strong>nrmse_val</strong> (<em>float</em>) – NRMSE value of simulated array.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Returns None if the length of the parameters do not match.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="assignment_B_functions.percent_bias">
+<code class="sig-prename descclassname">assignment_B_functions.</code><code class="sig-name descname">percent_bias</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_array</span></em>, <em class="sig-param"><span class="n">sim_array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#assignment_B_functions.percent_bias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pecentage bias</p>
+<p>Takes an array of observed values and simulated values and calculated and returns the percent bias (PBIAS) value of the simulated values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_array</strong> (<em>array-like</em>) – Array of observed values.</p></li>
+<li><p><strong>sim_array</strong> (<em>array-like</em>) – Array of simulated values from modelling.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>pbias</strong> – PBIAS value of simulated array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Returns None if the length of the parameters do not match.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="assignment_B_functions.plot_growthrate">
+<code class="sig-prename descclassname">assignment_B_functions.</code><code class="sig-name descname">plot_growthrate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">country_column</span></em>, <em class="sig-param"><span class="n">growth_column</span></em>, <em class="sig-param"><span class="n">proj_column</span></em><span class="sig-paren">)</span><a class="headerlink" href="#assignment_B_functions.plot_growthrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a dataframe of countries and their main_analysis,</p>
+<dl class="simple">
+<dt>and the column names for Country, Growth Rates and Projected 2030 values,</dt><dd><dl class="simple">
+<dt>and creates:</dt><dd><p>an ordered dot plot indicating the growth rate with the colour indicating the projected values in 2030.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas DataFrame object</em>) – A DataFrame containing the main-analysis values of countries in the SDG dataset</p></li>
+<li><p><strong>country_column</strong> (<em>str</em>) – Column name of country names in DataFrame.</p></li>
+<li><p><strong>growth_column</strong> (<em>str</em>) – Column names of growth rates in DataFrame.</p></li>
+<li><p><strong>proj_column</strong> (<em>str</em>) – Column names of projected 2030 values in DataFrame.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fig</strong> – A figure containing an ordered dot plot indicating the growth rate with the colour indicating the projected values in 2030.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib figure object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="assignment_B_functions.plot_obs_sim">
+<code class="sig-prename descclassname">assignment_B_functions.</code><code class="sig-name descname">plot_obs_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_list</span></em>, <em class="sig-param"><span class="n">results_dict</span></em><span class="sig-paren">)</span><a class="headerlink" href="#assignment_B_functions.plot_obs_sim" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Takes a list of countries and a dictionary of main_analysis results, and creates:</dt><dd><p>a scatter plot of their observed values
+a line plot of their logistic regression
+a line plot of their linear regression</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country_list</strong> (<em>array</em>) – Array of keys in results_dict corresponding to the countries to be plotted</p></li>
+<li><p><strong>results_dict</strong> (<em>dict</em>) – Dictionary of results from main_analysis containing the lists of observed values and simulated values for logistic and linear models per country</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fig</strong> – A figure containing the observed, logistic-simulated and linear-simulated plots of the countries in country_list.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib figure object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="assignment_B_functions.r2">
+<code class="sig-prename descclassname">assignment_B_functions.</code><code class="sig-name descname">r2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_array</span></em>, <em class="sig-param"><span class="n">sim_array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#assignment_B_functions.r2" title="Permalink to this definition">¶</a></dt>
+<dd><p>R-squared value</p>
+<p>Takes an array of observed values and simulated values and
+calculates and returns the R-squared value for the simulated values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_array</strong> (<em>Array-like</em>) – Array of observed values.</p></li>
+<li><p><strong>sim_array</strong> (<em>Array-like</em>) – Array of simulated values from modelling.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>r2_val</strong> – R-squared value for the simulated array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Returns None if the length of the arrays do not match.</p>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Tan Chia Wu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

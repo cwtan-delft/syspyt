@@ -16,22 +16,27 @@ import time
 
 #%% 
 
-def print_val(val):
-    print(val)
-    return val
+# def print_val(val):
+#     print(val)
+#     return val
 
 #%%
 
 
 class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
     '''
-    Sumamary:
+    K-fold Radio window
+    
+    Summary:
     Creates a GUI window for human interaction that allows the user to \n
     choose the number of folds for K-fold validation in main_analysis.
     '''
     def __init__(self):
         '''
+        Initialise Main Window
+        
         Initialises the class KFoldWindow, the GUI window for user-interaction, and sets it to the front of screen.
+        
         Returns
         -------
         None.
@@ -51,6 +56,8 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
         
     def UiComponents(self):
         '''
+        UI components
+        
         Draws the widgets in the GUI window.
 
         Returns
@@ -66,6 +73,8 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
         
     def centreWindow(self):
         '''
+        Centre GUI window
+        
         Sets the GUI window in the centre of the screen.
 
         Returns
@@ -85,6 +94,8 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
 
     def title(self):
         '''
+        GUI Title Header
+        
         Defines the title widget containing the header text for the GUI window.
 
         Returns
@@ -117,6 +128,8 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
     
     def KFoldRadio (self):
         '''
+        K-fold Radio buttons
+        
         Defines the radio buttons for the selection between 5-fold and 10-fold validation.
 
         Returns
@@ -156,6 +169,8 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
         
     def radioOnClicked(self):
         '''
+        Radio Button on-toggle
+        
         Defines the on-click effect of the radio buttons.
         
         The radio button sets the global K-fold variable and then closes the window.
@@ -168,14 +183,15 @@ class KFoldWindow(QMainWindow, ):  # Inherits from / is a Main Window
         radiobutton = self.sender()
         if radiobutton.isChecked():
             self.kFold = radiobutton.kFold
-            print_val(radiobutton.kFold)
+            # print_val(radiobutton.kFold)
             self.close()
 #%%
 def window():
     '''
+    Call K-fold validation GUI
+    
     Initalises displays the GUI window for the class KFoldWindow.
     
-
     Returns
     -------
     TYPE
