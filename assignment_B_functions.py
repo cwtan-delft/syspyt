@@ -20,7 +20,8 @@ from sklearn.metrics import r2_score
 #%% functions
 
 # function to calculated percentage bias
-def percent_bias(obs_array,sim_array):
+def percent_bias(obs_array,sim_array):    
+    
     '''
     Pecentage bias
     

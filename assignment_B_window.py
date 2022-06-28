@@ -5,8 +5,9 @@ Created on Mon Nov  8 20:12:59 2021
 @author: tanch
 """
 
-from PyQt5.QtWidgets import QMainWindow, QLabel, QDesktopWidget, QRadioButton, QPushButton, QGraphicsColorizeEffect, QFont, QApplication
+from PyQt5.QtWidgets import QMainWindow, QLabel, QDesktopWidget, QRadioButton, QPushButton, QGraphicsColorizeEffect, QApplication
 from PyQt5.QtCore import Qt 
+from PyQt5.QtGui import QFont
 import sys
 
 

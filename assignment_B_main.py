@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 """
 Created on Thu Sep 23 16:26:38 2021
 
@@ -12,14 +12,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# import cProfile 
-# import pstats 
+import cProfile 
+import pstats 
 import time
 
 from assignment_B_functions import main_analysis, plot_trendlines, plot_dotplot
 from assignment_B_window import window
 
-
+import warnings
+warnings.filterwarnings("ignore")
 #%% 
 ##################################
 # Part7: Start profiling 
@@ -39,9 +40,9 @@ tstart = time.time()
 goal13 = pd.read_excel("Goal13.xlsx","data")
 metric = 'Number of people affected by disaster (number)'
 
-
+t1 = time.time() 
 ##################################
-# Part2: Start profiling 
+# Part2: Data Selection
 ##################################
 
 #Data selection - 'Number of people affected by disaster (number)'
@@ -56,7 +57,7 @@ country_pop = world_pop.loc[world_pop.Type == "Country/Area"]
 #top 30 largest countries
 country_pop_t30 = country_pop.sort_values("2020", ascending= False).head(30)
 
-
+t2 = time.time() 
 #%% Sanity Check
 
 ##################################
@@ -88,7 +89,7 @@ print("Sanity Check")
 print("----------------------------------------------")
 print("The maximum number of non-missing values is {} ".format(sanity_df.Observations.max()))
 print("The minimum number of non-missing values is {} ".format(sanity_df.Observations.min()))
-print("The mean number of non-missing values is {:.2f} ".format(sanity_df.Observations.mean()))
+print("The mean number of non-missing values is {:.2f} \n".format(sanity_df.Observations.mean()))
 
 
 #print countries with the maximum amount of datapoints
@@ -96,41 +97,54 @@ print("The mean number of non-missing values is {:.2f} ".format(sanity_df.Observ
 #sort sanity dataframe by max number of observations
 # sanity_by_max = sanity_df[sanity_df.Observations >=10].sort_values("Maximum", ascending = False)
 
-
+t3 = time.time() 
 #%% Main Analysis
+
+pr=cProfile.Profile() 
+pr.enable()
 
 ##################################
 # Part4: Perform the main analysis
 ##################################
 
-
-num_folds = 5
-##################################
-'''
-comment this out to disable GUI
-'''
-if __name__ == "__main__":
-    num_folds = window()
-##################################
-
-#set variables for logistic evaluation and validation here
-projection_year = 2030
-k_fold_seed = 1
-
-
-years_list = np.linspace(2005,2020,150)     
-
-results = main_analysis(goal13_affected, projection_year, years_list, num_folds, k_fold_seed)
-
-#create a dataframe from results dictionary
-results_df = pd.DataFrame.from_dict(results,orient='index')
-results_df.index.name = 'GeoAreaName'
+def func():
+    num_folds = 5
+    ##################################
+    '''
+    comment this out to disable GUI
+    '''
+    # if __name__ == "__main__":
+    #     num_folds = window()
+    ##################################
     
+    #set variables for logistic evaluation and validation here
+    projection_year = 2030
+    k_fold_seed = 1
+    
+    
+    years_list = np.linspace(2005,2020,150)     
+    
+    results = main_analysis(goal13_affected, projection_year, years_list, num_folds, k_fold_seed)
+    
+    #create a dataframe from results dictionary
+    results_df = pd.DataFrame.from_dict(results,orient='index')
+    results_df.index.name = 'GeoAreaName'
+
+t4 = time.time()   
+
+pr.disable() 
+ps=pstats.Stats(pr).strip_dirs().sort_stats('cumulative')
+ps.print_stats(20) 
+ps.print_stats('script_to_search')
+ps.print_callers(20)
+
+# %reload_ext snakeviz
+# %snakeviz func()
 
 #%% plot for 2 countries
 
 ##################################
-# Part5A: Select 2 contrasting countries and sisplay their trends
+# Part5A: Select 2 contrasting countries and display their trends
 ##################################
 
 country_plot =  ["Niger", "Sri Lanka"]
@@ -139,6 +153,8 @@ fig_2_countries = plot_trendlines(country_plot, results)
 fig_name = "{}_vs_{}_timeseries.png".format(country_plot[0],country_plot[1])
 fig_2_countries.savefig(fig_name,bbox_inches="tight")
 plt.close(fig_2_countries)
+
+t5a = time.time() 
 #%% ordered dot plot of 30 most polulous countries
 
 ##################################
@@ -159,6 +175,8 @@ plot_df.dropna(axis = 0, inplace = True)
 growthplot = plot_dotplot(plot_df, "GeoAreaName", "Growth Rate", "2030 Logistic")
 growthplot.savefig("dot.png")
 plt.close(growthplot)
+
+t5b = time.time() 
 #%% create csv file
 
 ##################################
@@ -172,6 +190,7 @@ csv_indexes = pd.DataFrame(index=pivot13.index)
 csv_data = pd.merge(csv_indexes, results_df[list(results_df)[-11:]], left_index=True, right_index=True, how='left')
 csv_data.to_csv(csv_name)
 
+t6 = time.time() 
 #%%
 ##################################
 # Additional code for presentation
@@ -248,5 +267,29 @@ csv_data.to_csv(csv_name)
 # ps.print_stats('script_to_search')
 # ps.print_callers()
 
-tend = time.time()  
-print('Done script in %5.2f s\n'% (tend - tstart))
+# tend = time.time()  
+# print('Done script in %5.2f s\n'% (tend - tstart))
+
+time1 = t1- tstart
+time2 = t2- t1
+time3 = t3 - t2
+time4 = t4-t3
+time5a = t5a - t4
+time5b = t5b - t5a
+time6 = t6 - t5b
+
+timefig, ax= plt.subplots(dpi = 300)
+x = ["Part1: Import data", "Part2: Data selection", "Part3: Make sanity checks",
+     "Part4: Perform the main analysis", "Part5A: Select 2 contrasting countries and display their trends",
+     "Part5B: display an ordered dot plot of 30 most poplulous countries",
+     "Part6: Export Main results to a csv file"]
+y=[time1, time2, time3, time4, time5a, time5b, time6]
+
+hbars = ax.barh(x,y)
+plt.xlabel("Time (s)")
+plt.xlim(0,150)
+ax.bar_label(hbars, fmt='%.2f')
+
+plt.show()
+timefig.savefig("timing for each part.png", bbox_inches="tight")
+plt.close(timefig)
