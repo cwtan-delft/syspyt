@@ -13,11 +13,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 import cProfile 
-import pstats 
+# import pstats 
 import time
 
 from assignment_B_functions import main_analysis, plot_trendlines, plot_dotplot
-from assignment_B_window import window
+# from assignment_B_window import window
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -129,14 +129,17 @@ def func():
     #create a dataframe from results dictionary
     results_df = pd.DataFrame.from_dict(results,orient='index')
     results_df.index.name = 'GeoAreaName'
+    return results, results_df
+
+results, results_df = func()
 
 t4 = time.time()   
 
-pr.disable() 
-ps=pstats.Stats(pr).strip_dirs().sort_stats('cumulative')
-ps.print_stats(20) 
-ps.print_stats('script_to_search')
-ps.print_callers(20)
+# pr.disable() 
+# ps=pstats.Stats(pr).strip_dirs().sort_stats('cumulative')
+# ps.print_stats(20) 
+# ps.print_stats('script_to_search')
+# ps.print_callers(20)
 
 # %reload_ext snakeviz
 # %snakeviz func()
@@ -148,10 +151,11 @@ ps.print_callers(20)
 ##################################
 
 country_plot =  ["Niger", "Sri Lanka"]
+savepath = "./output"
 
 fig_2_countries = plot_trendlines(country_plot, results)
-fig_name = "{}_vs_{}_timeseries.png".format(country_plot[0],country_plot[1])
-fig_2_countries.savefig(fig_name,bbox_inches="tight")
+fig_name = "/{}_vs_{}_timeseries.png".format(country_plot[0],country_plot[1])
+fig_2_countries.savefig(savepath+fig_name,bbox_inches="tight")
 plt.close(fig_2_countries)
 
 t5a = time.time() 
@@ -173,7 +177,7 @@ plot_df.dropna(axis = 0, inplace = True)
 
 #plot
 growthplot = plot_dotplot(plot_df, "GeoAreaName", "Growth Rate", "2030 Logistic")
-growthplot.savefig("dot.png")
+growthplot.savefig(savepath+"/dot.png")
 plt.close(growthplot)
 
 t5b = time.time() 
@@ -182,19 +186,20 @@ t5b = time.time()
 ##################################
 # Part6: Export Main results to a csv file
 ##################################
-csv_name = "SDG13_simulation.csv"
+csv_name = "/SDG13_simulation.csv"
 
 results_df = pd.DataFrame.from_dict(results,orient='index')
 results_df.index.name = 'GeoAreaName'
 csv_indexes = pd.DataFrame(index=pivot13.index)
 csv_data = pd.merge(csv_indexes, results_df[list(results_df)[-11:]], left_index=True, right_index=True, how='left')
-csv_data.to_csv(csv_name)
+csv_data.to_csv(savepath+csv_name)
 
 t6 = time.time() 
 #%%
 ##################################
 # Additional code for presentation
 ##################################
+savepath = "./output"
 
 #%% sanity check only for 30 most populous countries
 # sanity_30 = pd.merge(sanity_df, country_pop_t30[["Region, subregion, country or area *"]],left_on="GeoAreaName", right_on="Region, subregion, country or area *", how= "right")
@@ -209,7 +214,7 @@ t6 = time.time()
 #     ax[idx].set_xlabel(col)
 # fig.suptitle ("Logistic Evaluation")
 # plt.tight_layout()
-# fig.savefig("log_boxplot.png")
+# fig.savefig(savepath+"/log_boxplot.png")
 # plt.show()
 # plt.close()
 
@@ -222,7 +227,7 @@ t6 = time.time()
 #     ax[idx].set_xlabel(col)
 # plt.suptitle ("Linear Evaluation")
 # plt.tight_layout()
-# fig.savefig("linear_boxplot.png")
+# fig.savefig(savepath+"/linear_boxplot.png")
 # plt.show()
 # plt.close()
 
@@ -236,7 +241,7 @@ t6 = time.time()
 #     ax[idx].set_xlabel(col)
 # fig.suptitle ("K-Fold Validation")
 # plt.tight_layout()
-# fig.savefig("kfold_boxplot.png")
+# fig.savefig(savepath+"kfold_boxplot.png")
 # plt.show()
 # plt.close()
 
@@ -249,8 +254,8 @@ t6 = time.time()
 # for country in country_plot:
 #     if country in results.keys():
 #         fig = plot_obs_sim(country,results)
-#         fig_name = "obsevered_vs_simulated_trend_{}.png".format(country)
-#         fig.savefig(fig_name,bbox_inches="tight")
+#         fig_name = "/obsevered_vs_simulated_trend_{}.png".format(country)
+#         fig.savefig(savepath+fig_name,bbox_inches="tight")
 #         plt.close(fig)
 #     else:
 #         print("{}: missing plot".format(country))
@@ -270,6 +275,9 @@ t6 = time.time()
 # tend = time.time()  
 # print('Done script in %5.2f s\n'% (tend - tstart))
 
+
+#%% Plotting the time taken to run each code part from 1 to 6
+
 time1 = t1- tstart
 time2 = t2- t1
 time3 = t3 - t2
@@ -284,6 +292,7 @@ x = ["Part1: Import data", "Part2: Data selection", "Part3: Make sanity checks",
      "Part5B: display an ordered dot plot of 30 most poplulous countries",
      "Part6: Export Main results to a csv file"]
 y=[time1, time2, time3, time4, time5a, time5b, time6]
+savepath = "./reflections"
 
 hbars = ax.barh(x,y)
 plt.xlabel("Time (s)")
@@ -291,5 +300,5 @@ plt.xlim(0,150)
 ax.bar_label(hbars, fmt='%.2f')
 
 plt.show()
-timefig.savefig("timing for each part.png", bbox_inches="tight")
+timefig.savefig(savepath+"/timing for each part.png", bbox_inches="tight")
 plt.close(timefig)
